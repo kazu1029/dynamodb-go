@@ -126,6 +126,9 @@ func (t *Toggle) Save(ctx context.Context, s Switch) error {
 	}
 
 	latestAttrs, err := attributevalue.MarshalMap(s.asLatestItem())
+	if err != nil {
+		return err
+	}
 
 	_, err = t.db.TransactWriteItems(ctx, &dynamodb.TransactWriteItemsInput{
 		TransactItems: []types.TransactWriteItem{
