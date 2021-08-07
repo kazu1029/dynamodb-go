@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "serverless-localstack": "^0.4.32"
+  },
+  "dependencies": {
+    "serverless-plugin-offline-dynamodb-stream": "^1.0.20"
+  }
+}

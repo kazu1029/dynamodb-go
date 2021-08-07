@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4567-4597:4567-4597"
+      - "8080:8080"
+    environment:
+      - SERVICES=lambda,s3,sqs,sns
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./tmp/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+  dynamo:
+    image: amazon/dynamodb-local
+    ports:
+      - "8000:8000"

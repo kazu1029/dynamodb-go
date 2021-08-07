@@ -55,6 +55,27 @@ func SetupTable(ctx context.Context, tableName, path string) (*dynamodb.Client, 
 		log.Fatal(err)
 	}
 	return db, func() {
-		db.DeleteTable(ctx, &dynamodb.DeleteTableInput{TableName: aws.String(tableName)})
+		_, _ = db.DeleteTable(ctx, &dynamodb.DeleteTableInput{TableName: aws.String(tableName)})
+	}
+}
+
+func SetupTableWithStream(ctx context.Context, tableName, path string) (*dynamodb.Client, func()) {
+	db := localDynamoDB()
+	tmpl, err := goformation.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	table, err := tmpl.GetAWSDynamoDBTableWithName(tableName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	input := FromCloudFormationToCreateInputWithStream(*table)
+	_, err = db.CreateTable(ctx, &input)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db, func() {
+		_, _ = db.DeleteTable(ctx, &dynamodb.DeleteTableInput{TableName: aws.String(tableName)})
 	}
 }

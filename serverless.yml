@@ -1,0 +1,41 @@
+service: dynamodbLambda
+
+plugins:
+  - serverless-localstack
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: go1.x
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./hello-go-lambda/bin/**
+
+functions:
+  hello:
+    handler: hello-go-lambda/bin/main
+    events:
+      - http:
+          path: hello
+          method: get
+      - stream: arn:aws:dynamodb:ddblocal:000000000000:table/SampleTable
+
+custom:
+  localstack:
+    stages:
+      - local
+    host: http://localhost
+    autostart: true
+    endpoints:
+      SQS: http://localhost:4576
+      Lambda: http://localhost:4574
+    lambda:
+      mountCode: True
+    docker:
+      sudo: False
+  stages:
+    local:
